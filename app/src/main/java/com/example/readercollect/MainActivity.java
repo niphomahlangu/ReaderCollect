@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.itemAddCategory: startActivity(new Intent(MainActivity.this, Category.class));
+            case R.id.itemSignOut:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainActivity.this,Login.class));
+                Toast.makeText(MainActivity.this, "Logged out.", Toast.LENGTH_SHORT).show();
+                finish();
             return true;
             default:
                 return super.onOptionsItemSelected(item);
