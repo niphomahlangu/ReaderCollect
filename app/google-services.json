@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632817919902",
+    "project_id": "readercollect-fea9a",
+    "storage_bucket": "readercollect-fea9a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632817919902:android:0b27233d4e0590cbb8988f",
+        "android_client_info": {
+          "package_name": "com.example.readercollect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632817919902-mqu8svni1hgvoek9aei4nio4t7hsfss1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2KRVQL9sekJ1f8kkAAVFbRmwh-za5Nww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632817919902-mqu8svni1hgvoek9aei4nio4t7hsfss1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

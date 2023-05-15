@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ReaderCollect</string>
+    <string name="loginString">Already have an account? <font color='#221769'>Login</font></string>
+    <string name="regString">Dont have an account? <font color='#221769'>Register here.</font></string>
+</resources>
