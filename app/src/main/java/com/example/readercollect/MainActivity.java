@@ -3,6 +3,9 @@ package com.example.readercollect;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,18 +15,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.readercollect.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
     AlertDialog.Builder builder;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        replaceFragment(new HomeFragment());
 
         builder = new AlertDialog.Builder(MainActivity.this);
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.item_home:
+                    replaceFragment(new HomeFragment());
+                    break;
+                case R.id.item_favorites:
+                    replaceFragment(new FavoritesFragment());
+                    break;
+                case R.id.item_stats:
+                    replaceFragment(new StatsFragment());
+                    break;
+            }
+            return true;
+        });
 
     }
 
@@ -65,5 +87,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.commit();
     }
 }

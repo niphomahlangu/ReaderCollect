@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 public class StatsFragment extends Fragment {
 
 
-
     public StatsFragment() {
         // Required empty public constructor
     }
