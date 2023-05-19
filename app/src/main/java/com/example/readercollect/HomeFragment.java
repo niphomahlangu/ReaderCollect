@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-
 public class HomeFragment extends Fragment implements View.OnClickListener{
 
     FloatingActionButton btnAddCategory;
@@ -20,7 +19,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public HomeFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
