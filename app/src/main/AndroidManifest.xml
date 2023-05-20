@@ -28,7 +28,7 @@
             android:name=".Register"
             android:exported="false" />
         <activity
-            android:name=".Category"
+            android:name=".CategoryActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
