@@ -70,9 +70,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String categoryName = snapshot.child("CategoryName").getValue().toString();
                         String maxItems = snapshot.child("MaxNum").getValue().toString();
+                        String dateCreated = snapshot.child("DateCreated").getValue().toString();
 
                         holder.categoryName_view.setText(categoryName);
                         holder.maxItems_view.setText(maxItems);
+                        holder.categoryDate_view.setText(dateCreated);
                     }
 
                     @Override

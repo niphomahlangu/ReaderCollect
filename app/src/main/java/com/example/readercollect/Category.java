@@ -1,15 +1,15 @@
 package com.example.readercollect;
 
 public class Category {
-    String CategoryName;
+    String CategoryName, CategoryDate;
     int MaxItems;
 
     public Category() {
     }
 
-    public Category(String categoryName, int maxItems) {
+    public Category(String categoryName, String categoryDate, int maxItems) {
         CategoryName = categoryName;
-        //CategoryDate = categoryDate;
+        CategoryDate = categoryDate;
         MaxItems = maxItems;
     }
 
@@ -21,13 +21,13 @@ public class Category {
         CategoryName = categoryName;
     }
 
-    /*public String getCategoryDate() {
+    public String getCategoryDate() {
         return CategoryDate;
     }
 
     public void setCategoryDate(String categoryDate) {
         CategoryDate = categoryDate;
-    }*/
+    }
 
     public int getMaxItems() {
         return MaxItems;

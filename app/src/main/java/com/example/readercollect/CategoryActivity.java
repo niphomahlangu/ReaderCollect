@@ -3,6 +3,7 @@ package com.example.readercollect;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -17,7 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -28,6 +32,7 @@ public class CategoryActivity extends AppCompatActivity {
     DatabaseReference dbReference;
     FirebaseAuth firebaseAuth;
     String userId;
+    String currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,7 @@ public class CategoryActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         dbReference = FirebaseDatabase.getInstance().getReference();
         userId = firebaseAuth.getCurrentUser().getUid();
+        currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         //create category
         btnCreateCategory.setOnClickListener(new View.OnClickListener() {
@@ -69,14 +75,18 @@ public class CategoryActivity extends AppCompatActivity {
                 HashMap hashMap = new HashMap();
                 hashMap.put("CategoryName", category);
                 hashMap.put("MaxNum", maxNum);
+                hashMap.put("DateCreated", currentDate);
                 //get key
                 String key = dbReference.push().getKey();
+
                 //insert values into database
                 dbReference.child(userId).child("Category").child(key).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(CategoryActivity.this, "Category added successfully.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(CategoryActivity.this, MainActivity.class));
+                            finish();
                         }else {
                             Toast.makeText(CategoryActivity.this, "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
