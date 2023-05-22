@@ -9,28 +9,25 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class BookActivity extends AppCompatActivity {
+public class MyBooks extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book);
-
+        setContentView(R.layout.activity_my_books);
     }
-
     //action menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.photo_action_menu, menu);
+        inflater.inflate(R.menu.books_action_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.itemAddPhoto:
-                //something
+            case R.id.item_addBook: startActivity(new Intent(MyBooks.this, BookActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

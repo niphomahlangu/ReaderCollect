@@ -75,6 +75,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         holder.categoryName_view.setText(categoryName);
                         holder.maxItems_view.setText(maxItems);
                         holder.categoryDate_view.setText(dateCreated);
+
+                        //click on item
+                        holder.view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                startActivity(new Intent(getActivity(), MyBooks.class));
+                            }
+                        });
                     }
 
                     @Override
@@ -108,6 +116,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
     public static class CategoryViewHolder extends RecyclerView.ViewHolder
     {
         TextView categoryName_view, maxItems_view, categoryDate_view;
+        View view;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -115,6 +124,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
             categoryName_view = itemView.findViewById(R.id.categoryName_view);
             maxItems_view = itemView.findViewById(R.id.maxItems_view);
             categoryDate_view = itemView.findViewById(R.id.categoryDate_view);
+            view = itemView;
         }
     }
 }
