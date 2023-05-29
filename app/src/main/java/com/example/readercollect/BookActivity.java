@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -51,7 +53,7 @@ public class BookActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     DatabaseReference bookDbRef;
     String currentUser;
-
+    boolean cameraIsAdded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,20 +70,7 @@ public class BookActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser().getUid();
         bookDbRef = FirebaseDatabase.getInstance().getReference().child(currentUser).child("Books");
-
-        //select image from internal storage
-        selectBook_imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                /*Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-
-                startActivityForResult(intent,REQUEST_CODE_IMAGE);*/
-            }
-        });
+        cameraIsAdded = false;
 
         //upload book name and image
         btnCreateBook.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +88,6 @@ public class BookActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void uploadImage(final String imageName) {
 
@@ -162,6 +150,16 @@ public class BookActivity extends AppCompatActivity {
         LinearLayout cameraLayout = dialog.findViewById(R.id.layoutCamera);
         LinearLayout galleryLayout = dialog.findViewById(R.id.layoutGallery);
 
+        cameraLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_CODE_IMAGE);
+                cameraIsAdded = true;
+            }
+        });
+
         galleryLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,7 +168,6 @@ public class BookActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE_IMAGE);
-                //startActivityForResult(intent,REQUEST_CODE_IMAGE);
             }
         });
 
@@ -185,10 +182,14 @@ public class BookActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_IMAGE && data!=null) {
+        if (requestCode == REQUEST_CODE_IMAGE && data!=null && cameraIsAdded==false) {
             imageUri = data.getData();
             isImageAdded = true;
             selectBook_imageView.setImageURI(imageUri);
+        }else {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            isImageAdded = true;
+            selectBook_imageView.setImageBitmap(photo);
         }
     }
 }
