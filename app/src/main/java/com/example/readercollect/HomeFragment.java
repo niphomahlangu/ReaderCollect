@@ -80,7 +80,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                         holder.view.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                startActivity(new Intent(getActivity(), MyBooks.class));
+                                Intent intent = new Intent(getActivity(), MyBooks.class);
+                                intent.putExtra("CategoryId", categoryId);
+                                startActivity(intent);
                             }
                         });
                     }

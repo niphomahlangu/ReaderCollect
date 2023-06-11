@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -33,15 +34,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 public class BookActivity extends AppCompatActivity {
 
     //variable declarations
-    ImageView selectBook_imageView;
+    ImageView addedImage_imageView;
     EditText txtBookName;
     TextView progressView;
     ProgressBar book_progressBar;
@@ -52,7 +55,7 @@ public class BookActivity extends AppCompatActivity {
     boolean isImageAdded = false;
     FirebaseAuth firebaseAuth;
     DatabaseReference bookDbRef;
-    String currentUser;
+    String currentUser, categoryId;
     boolean cameraIsAdded;
 
     @Override
@@ -61,7 +64,7 @@ public class BookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book);
 
         //variable initialization
-        selectBook_imageView = findViewById(R.id.selectBook_imageView);
+        addedImage_imageView = findViewById(R.id.addedImage_imageView);
         progressView = findViewById(R.id.progressView);
         book_progressBar = findViewById(R.id.book_progressBar);
         txtBookName = findViewById(R.id.txtBookName);
@@ -69,8 +72,13 @@ public class BookActivity extends AppCompatActivity {
         storageRef = FirebaseStorage.getInstance().getReference().child("BookImage");
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser().getUid();
-        bookDbRef = FirebaseDatabase.getInstance().getReference().child(currentUser).child("Books");
+        categoryId = getIntent().getStringExtra("CategoryId");
+        bookDbRef = FirebaseDatabase.getInstance().getReference().child(currentUser).child("Category").child(categoryId).child("Books");
         cameraIsAdded = false;
+
+        //hide progressBar
+        progressView.setVisibility(View.GONE);
+        book_progressBar.setVisibility(View.GONE);
 
         //upload book name and image
         btnCreateBook.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +96,8 @@ public class BookActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void uploadImage(final String imageName) {
 
@@ -113,11 +123,17 @@ public class BookActivity extends AppCompatActivity {
                             public void onSuccess(Void unused) {
                                 Toast.makeText(BookActivity.this, "Book uploaded successfully.", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(BookActivity.this, MyBooks.class));
-                                finish();
                             }
                         });
                     }
                 });
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@androidx.annotation.NonNull UploadTask.TaskSnapshot snapshot) {
+                double progress = (snapshot.getBytesTransferred()*100)/snapshot.getTotalByteCount();
+                book_progressBar.setProgress((int)progress);
+                progressView.setText(progress+"%");
             }
         });
     }
@@ -185,11 +201,21 @@ public class BookActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_IMAGE && data!=null && cameraIsAdded==false) {
             imageUri = data.getData();
             isImageAdded = true;
-            selectBook_imageView.setImageURI(imageUri);
+            addedImage_imageView.setImageURI(imageUri);
         }else {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
+            //convert Bitmap object to Uri
+            imageUri = getImageUri(getApplicationContext(), photo);
             isImageAdded = true;
-            selectBook_imageView.setImageBitmap(photo);
+            addedImage_imageView.setImageURI(imageUri);
         }
+    }
+
+    //returns Uri of the camera image
+    private Uri getImageUri(Context applicationContext, Bitmap photo) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(applicationContext.getContentResolver(), photo, "Title", null);
+        return Uri.parse(path);
     }
 }
