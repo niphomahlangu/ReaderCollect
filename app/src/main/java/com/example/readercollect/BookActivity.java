@@ -39,7 +39,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class BookActivity extends AppCompatActivity {
 
@@ -55,7 +58,7 @@ public class BookActivity extends AppCompatActivity {
     boolean isImageAdded = false;
     FirebaseAuth firebaseAuth;
     DatabaseReference bookDbRef;
-    String currentUser, categoryId;
+    String currentUser, categoryId, currentDate;
     boolean cameraIsAdded;
 
     @Override
@@ -73,6 +76,7 @@ public class BookActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser().getUid();
         categoryId = getIntent().getStringExtra("CategoryId");
+        currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         bookDbRef = FirebaseDatabase.getInstance().getReference().child(currentUser).child("Category").child(categoryId).child("Books");
         cameraIsAdded = false;
 
@@ -116,6 +120,7 @@ public class BookActivity extends AppCompatActivity {
                         HashMap hashMap = new HashMap();
                         hashMap.put("BookName",imageName);
                         hashMap.put("ImageUri",uri.toString());
+                        hashMap.put("Date",currentDate);
 
                         //insert data into the database
                         bookDbRef.child(key).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
