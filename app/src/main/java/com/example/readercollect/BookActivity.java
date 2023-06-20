@@ -127,7 +127,7 @@ public class BookActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void unused) {
                                 Toast.makeText(BookActivity.this, "Book uploaded successfully.", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(BookActivity.this, MyBooks.class));
+                                book_progressBar.setVisibility(View.GONE);
                             }
                         });
                     }

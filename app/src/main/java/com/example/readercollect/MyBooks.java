@@ -100,7 +100,7 @@ public class MyBooks extends AppCompatActivity {
         dialog.setContentView(R.layout.options_bottomsheet_layout);
 
         LinearLayout addToFavLayout = dialog.findViewById(R.id.layoutAddToFavorites);
-        LinearLayout renameBookLayout = dialog.findViewById(R.id.layoutRename);
+        LinearLayout editBookLayout = dialog.findViewById(R.id.layoutEdit);
         LinearLayout deleteBookLayout = dialog.findViewById(R.id.layoutDelete);
 
         addToFavLayout.setOnClickListener(new View.OnClickListener() {
@@ -125,7 +125,7 @@ public class MyBooks extends AppCompatActivity {
                 });
             }
         });
-        renameBookLayout.setOnClickListener(new View.OnClickListener() {
+        editBookLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();

@@ -6,47 +6,18 @@
     android:background="@drawable/dialog_bg">
 
     <LinearLayout
-        android:id="@+id/layoutAddToFavorites"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
-
+        android:orientation="horizontal"
+        android:gravity="center">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_favorite"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add to favorites"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
-
+            android:src="@drawable/ic_drag_handle"/>
     </LinearLayout>
+
     <LinearLayout
-        android:id="@+id/layoutMarkAsRead"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_read"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mark as read"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/layoutEdit"
+        android:id="@+id/option_editCategory"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,7 +37,7 @@
 
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/layoutDelete"
+        android:id="@+id/option_deleteCategory"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,5 +57,4 @@
             android:textColor="#EA3131"/>
 
     </LinearLayout>
-
 </LinearLayout>

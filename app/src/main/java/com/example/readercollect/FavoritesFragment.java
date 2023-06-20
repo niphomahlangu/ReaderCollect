@@ -66,7 +66,7 @@ public class FavoritesFragment extends Fragment {
                         String bookImage = snapshot.child("ImageUri").getValue().toString();
 
                         holder.favorite_bookName.setText(bookName);
-                        Picasso.get().load(model.getImageUri()).into(holder.favorite_bookImage);
+                        Picasso.get().load(bookImage).into(holder.favorite_bookImage);
                     }
 
                     @Override
