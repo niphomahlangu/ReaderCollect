@@ -40,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.item_favorites:
                     replaceFragment(new FavoritesFragment());
                     break;
-                case R.id.item_stats:
-                    replaceFragment(new StatsFragment());
-                    break;
             }
             return true;
         });

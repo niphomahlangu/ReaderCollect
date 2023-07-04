@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,104 +28,108 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
-public class BookActivity extends AppCompatActivity {
+public class EditBook extends AppCompatActivity {
 
-    //variable declarations
-    ImageView addedImage_imageView;
-    EditText txtBookName;
-    TextView progressView;
-    ProgressBar book_progressBar;
-    Button btnCreateBook;
-    private static final int REQUEST_CODE_IMAGE = 1;
-    StorageReference storageRef;
-    Uri imageUri;
-    boolean isImageAdded = false;
+    //variable declaration
+    ImageView edit_image;
+    EditText edit_bookName;
+    TextView edit_progressView;
+    ProgressBar edit_progressBar;
+    Button btnUpdateBook;
     FirebaseAuth firebaseAuth;
-    DatabaseReference bookDbRef;
-    String currentUser, categoryId, currentDate;
-    boolean cameraIsAdded;
+    DatabaseReference dbBookReference;
+    StorageReference storageReference;
+    String currentUser, bookId, categoryId, bookName, imageUri;
+    Uri myImageUri;
+    boolean isImageAdded, cameraIsAdded;
+    private static final int REQUEST_CODE_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book);
+        setContentView(R.layout.activity_edit_book);
 
         //variable initialization
-        addedImage_imageView = findViewById(R.id.addedImage_imageView);
-        progressView = findViewById(R.id.progressView);
-        book_progressBar = findViewById(R.id.book_progressBar);
-        txtBookName = findViewById(R.id.txtBookName);
-        btnCreateBook = findViewById(R.id.btnCreateBook);
-        storageRef = FirebaseStorage.getInstance().getReference().child("BookImage");
+        edit_image = findViewById(R.id.edit_image);
+        edit_bookName = findViewById(R.id.edit_bookName);
+        edit_progressView = findViewById(R.id.edit_progressView);
+        edit_progressBar = findViewById(R.id.edit_progressBar);
+        btnUpdateBook = findViewById(R.id.btnUpdateBook);
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser().getUid();
         categoryId = getIntent().getStringExtra("CategoryId");
-        currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        bookDbRef = FirebaseDatabase.getInstance().getReference().child(currentUser).child("Category").child(categoryId).child("Books");
+        bookId = getIntent().getStringExtra("BookId");
+        bookName = getIntent().getStringExtra("BookName");
+        imageUri = getIntent().getStringExtra("ImageUri");
+        dbBookReference = FirebaseDatabase.getInstance().getReference().child(currentUser).child(categoryId).child(bookId);
+        storageReference = FirebaseStorage.getInstance().getReference().child("BookImage");
+        isImageAdded = false;
         cameraIsAdded = false;
 
-        //hide progressBar
-        progressView.setVisibility(View.GONE);
-        book_progressBar.setVisibility(View.GONE);
+        //make progressBar and progressView gone
+        edit_progressView.setVisibility(View.GONE);
+        edit_progressBar.setVisibility(View.GONE);
 
-        //upload book name and image
-        btnCreateBook.setOnClickListener(new View.OnClickListener() {
+        //load the selected book
+        loadBookData();
+
+        btnUpdateBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String imageName = txtBookName.getText().toString();
-                //check if text field empty
-                if(TextUtils.isEmpty(imageName)){
-                    txtBookName.setError("Name is required!");
-                    return;
-                }
-                if(isImageAdded!=false && imageName!=null){
-                    uploadImage(imageName);
-                }
+                uploadChanges();
             }
         });
     }
 
-    private void uploadImage(final String imageName) {
+    private void uploadChanges() {
+        edit_progressView.setVisibility(View.VISIBLE);
+        edit_progressBar.setVisibility(View.VISIBLE);
 
-        progressView.setVisibility(View.VISIBLE);
-        book_progressBar.setVisibility(View.VISIBLE);
+        String key = dbBookReference.push().getKey();
 
-        final String key = bookDbRef.push().getKey();
-        //put file in the storage
-        storageRef.child(key+".jpg").putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        storageReference.child(key+".jpg").putFile(myImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                storageRef.child(key+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storageReference.child(key+".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        //assign data to corresponding data fields
-                        HashMap hashMap = new HashMap();
-                        hashMap.put("BookName",imageName);
-                        hashMap.put("ImageUri",uri.toString());
-                        hashMap.put("Date",currentDate);
-                        hashMap.put("Status","unread");
+                        //update book name
+                        bookName = edit_bookName.getText().toString();
+                        //update imageUri
+                        imageUri = uri.toString();
 
-                        //insert data into the database
-                        bookDbRef.child(key).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        HashMap hashMap = new HashMap();
+                        hashMap.put("BookName",bookName);
+                        hashMap.put("ImageUri",imageUri);
+
+                        dbBookReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener() {
                             @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(BookActivity.this, "Book uploaded successfully.", Toast.LENGTH_SHORT).show();
-                                book_progressBar.setVisibility(View.GONE);
+                            public void onComplete(@androidx.annotation.NonNull Task task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(EditBook.this, "Updated successfully.", Toast.LENGTH_SHORT).show();
+                                    edit_progressView.setVisibility(View.GONE);
+                                    edit_progressBar.setVisibility(View.GONE);
+                                }else {
+                                    Toast.makeText(EditBook.this, "Failed to update.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     }
@@ -136,8 +139,25 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onProgress(@androidx.annotation.NonNull UploadTask.TaskSnapshot snapshot) {
                 double progress = (snapshot.getBytesTransferred()*100)/snapshot.getTotalByteCount();
-                book_progressBar.setProgress((int)progress);
-                progressView.setText(progress+"%");
+                edit_progressBar.setProgress((int)progress);
+                edit_progressView.setText(progress+"%");
+            }
+        });
+    }
+
+    private void loadBookData() {
+        dbBookReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                //load image
+                Picasso.get().load(imageUri).into(edit_image);
+                //load book name
+                edit_bookName.setText(bookName);
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
             }
         });
     }
@@ -203,15 +223,15 @@ public class BookActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_IMAGE && data!=null && cameraIsAdded==false) {
-            imageUri = data.getData();
+            myImageUri = data.getData();
             isImageAdded = true;
-            addedImage_imageView.setImageURI(imageUri);
+            edit_image.setImageURI(myImageUri);
         }else {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             //convert Bitmap object to Uri
-            imageUri = getImageUri(getApplicationContext(), photo);
+            myImageUri = getImageUri(getApplicationContext(), photo);
             isImageAdded = true;
-            addedImage_imageView.setImageURI(imageUri);
+            edit_image.setImageURI(myImageUri);
         }
     }
 

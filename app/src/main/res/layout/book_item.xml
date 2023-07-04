@@ -57,5 +57,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_options" />
 
+        <ImageView
+            android:id="@+id/mark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/favorite_bookImage"
+            app:srcCompat="@drawable/ic_read" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MyViewHolder extends RecyclerView.ViewHolder{
-    ImageView bookImage_itemView, btn_books_options;
+    ImageView bookImage_itemView, btn_books_options, mark;
     TextView bookName_itemView, bookDate_itemView;
     public MyViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -17,5 +17,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
         bookName_itemView = itemView.findViewById(R.id.bookName_itemView);
         bookDate_itemView = itemView.findViewById(R.id.book_dateCreated);
         btn_books_options = itemView.findViewById(R.id.favorite_options);
+        mark = itemView.findViewById(R.id.mark);
     }
 }

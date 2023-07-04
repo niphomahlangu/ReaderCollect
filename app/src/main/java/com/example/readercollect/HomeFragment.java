@@ -153,20 +153,20 @@ public class HomeFragment extends Fragment implements View.OnClickListener{
                 //dialog box
                 builder.setIcon(R.drawable.book);
                 builder.setTitle("Delete Category");
-                builder.setMessage("Are you sure you want to Delete this category?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setMessage("Warning: All items in this category will be deleted.");
+                builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        /*categoryDbRef.child(categoryId).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        categoryDbRef.child(categoryId).setValue(null).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
                                 Toast.makeText(getActivity(), "Category deleted successfully.", Toast.LENGTH_SHORT).show();
                             }
-                        });*/
+                        });
                     }
                 });
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 

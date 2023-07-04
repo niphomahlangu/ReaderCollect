@@ -44,6 +44,7 @@ public class MyBooks extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseRecyclerOptions<Book> options;
     FirebaseRecyclerAdapter<Book, MyViewHolder> adapter;
+    int readBooksCount, totalBookCount, unreadBooksCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class MyBooks extends AppCompatActivity {
         currentUser = firebaseAuth.getCurrentUser().getUid();
         dbReference = FirebaseDatabase.getInstance().getReference().child(currentUser);
         booksDbRef = dbReference.child("Category").child(CategoryId).child("Books");
+        readBooksCount = 0;
+        unreadBooksCount = 0;
 
         bookList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         bookList.setHasFixedSize(true);
@@ -74,11 +77,25 @@ public class MyBooks extends AppCompatActivity {
                 Picasso.get().load(model.getImageUri()).into(holder.bookImage_itemView);
                 holder.bookDate_itemView.setText(model.getDate());
 
+                if(model.getStatus().equals("read")){
+                    //mark as read symbol
+                    holder.mark.setVisibility(View.VISIBLE);
+                    //count the number of read books
+                    readBooksCount = bookList.getAdapter().getItemCount();
+                }
+
+                //total book count
+                totalBookCount = bookList.getAdapter().getItemCount();
+                //count the number of unread books
+                unreadBooksCount = totalBookCount - readBooksCount;
+
+                //percentage of read books
+
                 //options button
                 holder.btn_books_options.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        showDialog(bookId, model.getBookName(), model.getImageUri());
+                        showDialog(bookId, model.getBookName(), model.getImageUri(), model.getDate());
                     }
                 });
             }
@@ -94,7 +111,7 @@ public class MyBooks extends AppCompatActivity {
         bookList.setAdapter(adapter);
     }
 
-    private void showDialog(String bookId, String bookName, String imageUri) {
+    private void showDialog(String bookId, String bookName, String imageUri, String date) {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.options_bottomsheet_layout);
@@ -102,6 +119,7 @@ public class MyBooks extends AppCompatActivity {
         LinearLayout addToFavLayout = dialog.findViewById(R.id.layoutAddToFavorites);
         LinearLayout editBookLayout = dialog.findViewById(R.id.layoutEdit);
         LinearLayout deleteBookLayout = dialog.findViewById(R.id.layoutDelete);
+        LinearLayout markAsRead = dialog.findViewById(R.id.layoutMarkAsRead);
 
         addToFavLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,10 +143,40 @@ public class MyBooks extends AppCompatActivity {
                 });
             }
         });
+        markAsRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //close dialog
+                dialog.dismiss();
+
+                HashMap hashMap = new HashMap();
+                hashMap.put("BookName",bookName);
+                hashMap.put("ImageUri",imageUri);
+                hashMap.put("Date",date);
+                hashMap.put("Status","read");
+
+                booksDbRef.child(bookId).setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@androidx.annotation.NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(MyBooks.this, "Marked as read.", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(MyBooks.this, "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
         editBookLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                Intent intent = new Intent(MyBooks.this, EditBook.class);
+                intent.putExtra("CategoryId",CategoryId);
+                intent.putExtra("BookId",bookId);
+                intent.putExtra("BookName",bookName);
+                intent.putExtra("ImageUri",imageUri);
+                startActivity(intent);
             }
         });
         deleteBookLayout.setOnClickListener(new View.OnClickListener() {

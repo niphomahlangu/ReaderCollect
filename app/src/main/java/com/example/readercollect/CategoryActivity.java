@@ -31,8 +31,7 @@ public class CategoryActivity extends AppCompatActivity {
     Button btnCreateCategory;
     DatabaseReference dbReference;
     FirebaseAuth firebaseAuth;
-    String userId;
-    String currentDate;
+    String userId, currentDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +84,6 @@ public class CategoryActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(CategoryActivity.this, "Category added successfully.", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(CategoryActivity.this, MainActivity.class));
                             finish();
                         }else {
                             Toast.makeText(CategoryActivity.this, "Error: "+task.getException().getMessage(), Toast.LENGTH_SHORT).show();

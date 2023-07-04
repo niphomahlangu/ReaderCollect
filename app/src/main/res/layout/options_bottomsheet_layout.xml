@@ -6,6 +6,17 @@
     android:background="@drawable/dialog_bg">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_drag_handle"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/layoutAddToFavorites"
         android:orientation="horizontal"
         android:layout_width="match_parent"

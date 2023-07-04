@@ -15,6 +15,12 @@
         android:theme="@style/Theme.ReaderCollect"
         tools:targetApi="31">
         <activity
+            android:name=".Statistics"
+            android:exported="false" />
+        <activity
+            android:name=".EditBook"
+            android:exported="false" />
+        <activity
             android:name=".EditCategory"
             android:exported="false" />
         <activity

@@ -1,34 +1,31 @@
 package com.example.readercollect;
 
 public class Book {
-    String BookName, ImageUri, Date;
+    String BookName, ImageUri, Date, Status;
 
     public Book() {
     }
 
-    public Book(String bookName, String imageUri, String date) {
+    public Book(String bookName, String imageUri, String date, String status) {
         BookName = bookName;
         ImageUri = imageUri;
         Date = date;
+        Status = status;
     }
 
     public String getBookName() {
         return BookName;
     }
 
-    /*public void setBookName(String bookName) {
-        BookName = bookName;
-    }*/
-
     public String getImageUri() {
         return ImageUri;
     }
 
-    /*public void setImageUri(String imageUri) {
-        ImageUri = imageUri;
-    }*/
-
     public String getDate() {
         return Date;
+    }
+
+    public String getStatus() {
+        return Status;
     }
 }
